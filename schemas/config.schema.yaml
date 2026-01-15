@@ -1,0 +1,89 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: cfClone Pipeline Schema
+description: Snakemake configuration file for cfClone pipeline
+type: object
+properties:
+  out_dir:
+    type: string
+    minLength: 1
+    description: Path to output directory
+  pipeline_dir:
+    type: string
+    minLength: 1
+    description: Path to pipeline working directory
+
+  clone_filter_file:
+    type: string
+    minLength: 1
+    description: Path to file with which clones to keep
+  hapclone_data_file:
+    type: string
+    minLength: 1
+    description: Path to single cell data stored in hdf5 file
+  hapclone_results_file:
+    type: string
+    minProperties: 1
+    description: Path to HapClone tsv results file
+  snp_file:
+    type: string
+    minProperties: 1
+    description: Path to file with patient SNP calls in BCF/VCF format with index
+  wig_template_file:
+    type: string
+    minLength: 1
+    description: Path to wig template file for scWGS data simulation
+  read_length:
+    type: integer
+    default: 150
+    description: Read length of data used for scWGS sequencing
+  ichorcna_settings_file:
+    type: string
+    minLength: 1
+    description: Path to ichorcna settings file
+
+
+  coverage:
+    type: array
+    contains:
+      "type": "number"
+    minContains: 1
+    description: List of coverage values to test
+  tumour_content:
+    type: array
+    contains:
+      "type": "number"
+    minContains: 1
+    description: List of tumour content values to test
+  clone_prevalences:
+    type: array
+    contains:
+      type: string
+    minLength: 1
+    description: List of paths to files with specified clone prevalences to use for simulation
+  num_replicates:
+    type: integer
+    minimum: 1
+    default: 1
+    description: Number of replicates per setting of coverage and tumour content
+  num_bins:
+    type: array
+    contains:
+      type: ["integer", "string"]
+      minimum: 0
+    default: [0]
+    description: Number of bins to sample for inference. Default 0 uses all bins
+
+required: [
+  "out_dir",
+  "pipeline_dir",
+  "clone_filter_file",
+  "hapclone_data_file",
+  "hapclone_results_file",
+  "snp_file",
+  "wig_template_file",
+  "ichorcna_settings_file",
+  "coverage",
+  "tumour_content",
+  "clone_prevalences",
+  "num_replicates",
+]

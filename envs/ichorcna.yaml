@@ -1,0 +1,16 @@
+name: ichorcna
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - click
+  - pyyaml
+  - setuptools
+  - pathlib
+  - r-base
+  - r-optparse
+  - r-ichorcna
+  - pip
+  - pip:
+      - "git+ssh://git@github.com/Roth-Lab/myichorcna@main"

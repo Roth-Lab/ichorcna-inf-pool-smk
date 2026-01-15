@@ -1,0 +1,12 @@
+software-deployment-method: conda
+
+use-conda: True
+
+rerun-incomplete: True
+
+cores: 10
+
+set-resources:
+  build_cfclone_ctdna_file:
+    mem_mb: 500
+    runtime: f"{60 * attempt}m"

@@ -1,0 +1,21 @@
+software-deployment-method: conda
+use-conda: True
+cores: 100
+
+rerun-incomplete: True
+
+resources:
+  job_load_factor: 10
+
+default-resources:
+    mem_mb: min(max(2*input.size_mb, 3000) * attempt, 15000)
+    runtime: f"{60 * attempt}m"
+
+set-resources:
+  build_cfclone_ctdna_file:
+    mem_mb: min((16000) * attempt, 64000)
+    runtime: f"{60 * attempt}m"
+
+  cfclone_run_cfclone:
+    mem_mb: min((1000 * threads) * attempt, 180000)
+    runtime: f"{1440 * attempt}m"

@@ -1,0 +1,40 @@
+
+# See schema for details
+
+# OUT DIRS
+
+out_dir: <path/to/out_dir>
+
+pipeline_dir: <path/to/pipeline_dir>
+
+# INPUT DATA 
+
+clone_filter_file: <path/to/clone_filter_file.tsv>
+
+hapcone_data_file: <path/to/hapclone_data.h5>
+
+hapclone_results_file: <path/to/hapclone_results.tsv.gz>
+
+snp_file: <path/to/patient_snps.bcf>
+
+wig_template_file: <path/to/wig_template.wig>               # reference genome must match with ichor_settings_
+
+ichorcna_settings_file: <path/to/ichorcna_settings.yaml>
+
+# GEN DATA PARAMS
+
+read_length: 150
+
+coverage:
+  - 0.5
+
+tumour_content:
+  - 0.0
+
+clone_prevalences:
+  - <path/to/clone_prevalences.tsv>
+
+num_replicates: 1
+
+num_bins: 
+  - 10

@@ -1,0 +1,13 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - h5py
+  - numpy
+  - pandas
+  - pysam
+  - pyyaml
+  - scipy
+  - statsmodels
+  - arviz
