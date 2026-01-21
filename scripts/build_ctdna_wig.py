@@ -165,11 +165,11 @@ if __name__ == "__main__":
     
     default1 = "/home/matteo/projects/cfdna/wfs/src/ichorcna-inf-pool-tf-smk/scripts/gc_hg38_500kb.wig"
 
-    parser.add_argument("-i", "--in-file", default=default0)
+    parser.add_argument("-i", "--in-file", required=True)
 
-    parser.add_argument("-o", "--out-file", default="output.wig")
+    parser.add_argument("-o", "--out-file", required=True)
     
-    parser.add_argument("-t", "--wig-template-file", default=default1)
+    parser.add_argument("-t", "--wig-template-file", required=True)
 
     cli_args = parser.parse_args()
 

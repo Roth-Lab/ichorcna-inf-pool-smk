@@ -86,9 +86,14 @@ rule build_ctdna_wig_file:
     conda:
         "envs/python.yaml"
     log:
-        config.get_log_file(config.ctdna_wig_template),
+        config.get_log_file(config.ctdna_wig_template)
+    params:
+        config.wig_template_file
     shell:
-        "(python scripts/build_ctdna_wig.py -i {input} -o {output}) >{log} 2>&1"
+        "(python scripts/build_ctdna_wig.py "
+        "-i {input} "
+        "-o {output} "
+        "--wig-template-file {params} ) >{log} 2>&1"
 
 
 rule run_ichorcna:
