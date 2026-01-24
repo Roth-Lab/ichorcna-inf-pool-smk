@@ -130,7 +130,7 @@ rule build_replicate_summary_file:
         n=config.get_num_bins_arg,
     shell:
         "(python scripts/write_summary_file.py "
-        " -i {input} "
+        "-i {input} "
         "-o {output} "
         "--coverage {params.cov} "
         "--tumour-content {params.tc} "
@@ -150,7 +150,7 @@ rule merge_summary_files:
     conda:
         "envs/python.yaml"
     shell:
-        "(python scripts/merge_tables.py --i {input} -o {output}) >{log} 2>&1"
+        "(python scripts/merge_tables.py -i {input} -o {output}) >{log} 2>&1"
 
 
 rule plot_tfs_summary:
@@ -163,4 +163,4 @@ rule plot_tfs_summary:
     conda:
         "envs/plot.yaml"
     shell:
-        "(python scripts/plot_summary_tfs.py --i {input} -o {output}) >{log} 2>&1"
+        "(python scripts/plot_summary_tfs.py -i {input} -o {output}) >{log} 2>&1"
