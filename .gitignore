@@ -199,3 +199,4 @@ example_data/
 test/
 test_data/
 results/
+scripts/gc_hg38_500kb.wig

@@ -54,10 +54,10 @@ rule build_cfclone_ctdna_file:
     output:
         config.cfclone_ctdna_template,
     params:
-        c=config.get_coverage_arg,
         r=config.read_length,
+        p=config.clone_prevalences,
         t=config.get_tumour_content_arg,
-        p=config.get_clone_prevalences_file_arg,
+        c=config.get_coverage_arg,
     conda:
         "envs/python.yaml"
     log:
@@ -124,10 +124,10 @@ rule build_replicate_summary_file:
     log:
         config.get_log_file(config.replicate_summary_file_template)
     params:
+        cp=config.clone_prevalences,
+        n=config.get_num_bins_arg,
         cov=config.get_coverage_arg,
         tc=config.get_tumour_content_arg,
-        cp=config.get_clone_prevalences_file_arg,
-        n=config.get_num_bins_arg,
     shell:
         "(python scripts/write_summary_file.py "
         "-i {input} "

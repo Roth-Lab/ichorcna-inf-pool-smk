@@ -1,12 +1,13 @@
-import pandas as pd
 import pathlib
+
+from itertools import product
 
 class ConfigManager(object):
     def __init__(self, config):
         self.config = config
+        
+    # WILDCARDS 
    
-    # DATA GENERATION SETTINGS 
-
     @property
     def coverage(self):
         return self.config["coverage"]
@@ -24,25 +25,19 @@ class ConfigManager(object):
         return list(range(len(self.tumour_content)))
     
     @property
-    def clone_prevalences(self):
-        return self.config['clone_prevalences']
+    def num_replicates(self):
+        return self.config.get("num_replicates", 1)
+    
+    # DATA GENERATION SETTINGS 
     
     @property
-    def clone_prevalences_ids(self):
-        return list(range(len(self.clone_prevalences)))
+    def clone_prevalences(self):
+        return self.config['clone_prevalences']
     
     @property
     def num_bins(self):
         return self.config['num_bins']
     
-    @property
-    def num_bin_ids(self):
-        return list(range(len(self.num_bins)))
-
-    @property
-    def num_replicates(self):
-        return self.config.get("num_replicates", 1)
-
     @property
     def read_length(self):
         return self.config.get("read_length", 150)
@@ -64,6 +59,8 @@ class ConfigManager(object):
     @property
     def snp_file(self):
         return pathlib.Path(self.config["snp_file"]).resolve()
+    
+    # ICHORCHA MODEL SETTINGS 
     
     @property
     def wig_template_file(self):
@@ -103,7 +100,7 @@ class ConfigManager(object):
     
     @property
     def cfclone_clone_cn_dir(self):
-        return self.out_dir.joinpath("input", "{num_bins_id}_bins")
+        return self.out_dir.joinpath("input", "clone_cn")
     
     @property
     def cfclone_clone_cn_template(self):
@@ -116,8 +113,6 @@ class ConfigManager(object):
             "ctdna",
             "coverage_{coverage_id}",
             "tc_{tumour_content_id}",
-            "cp_{clone_prevalences_id}",
-            "num_bins_{num_bins_id}",
         )
     
     @property
@@ -128,10 +123,6 @@ class ConfigManager(object):
     def ctdna_wig_template(self):
         return self.cfclone_ctdna_dir.joinpath("replicate_{seed}.wig")
         
-    @property
-    def ctdna_plot_template(self):
-        return self.out_dir.joinpath("ctdna_plot.png")
-    
     # ICHORCNA OUTPUT TEMPLATES
     
     @property
@@ -139,8 +130,6 @@ class ConfigManager(object):
         return self.tmp_dir.joinpath(
             "coverage_{coverage_id}",
             "tc_{tumour_content_id}", 
-            "cp_{clone_prevalences_id}",
-            "num_bins_{num_bins_id}",
             "replicate_{seed}",
         )
 
@@ -179,8 +168,6 @@ class ConfigManager(object):
         
         files.append(self.tfs_plot_file)
         
-        # files.append(self.summary_file_tfs)
-
         return files
 
     # HELPER FUNCTIONS FOR RULES 
@@ -194,12 +181,13 @@ class ConfigManager(object):
     def get_clone_prevalences_file_arg(self, wildcards):
         return str(self.clone_prevalences[int(wildcards.clone_prevalences_id)])
     
-    def get_num_bins_arg(self, wildcards):
-        num_bins_args = self.num_bins[int(wildcards.num_bins_id)]
-        if num_bins_args == "all":
-            return num_bins_args
+    @property
+    def get_num_bins_arg(self):
+        num_bins = self.num_bins
+        if num_bins == "all":
+            return num_bins
         else:
-            return int(num_bins_args)
+            return int(num_bins)
     
     def get_replicate_out_dir(self, wildcards):
         return str(
@@ -207,40 +195,28 @@ class ConfigManager(object):
         ).format(
             coverage_id=wildcards.coverage_id,
             tumour_content_id=wildcards.tumour_content_id,
-            clone_prevalences_id=wildcards.clone_prevalences_id,
-            num_bins_id=wildcards.num_bins_id,
             seed=wildcards.seed,
         )
+    
+    @property
+    def combos(self):
+        return [self.coverage_ids, self.tumour_content_ids, range(self.num_replicates)]
     
     @property
     def get_summary_files(self):
         
         files = []
         
-        for cov in self.coverage_ids:
-
-            for tc in self.tumour_content_ids:
-
-                for cp in self.clone_prevalences_ids:
-
-                    for b in self.num_bin_ids:
-                                        
-                        for seed in range(self.num_replicates):
-                            
-                            ctdna = str(
-                                self.replicate_summary_file_template
-                            ).format(
-                                coverage_id=cov,
-                                tumour_content_id=tc,
-                                clone_prevalences_id=cp,
-                                num_bins_id=b,
-                                seed=seed,
-                            )
-                            
-                            files.append(ctdna)
-        
+        for cov, tc, seed in product(*self.combos):
+            
+            files.append(str(self.replicate_summary_file_template).format(
+                coverage_id=cov,
+                tumour_content_id=tc,
+                seed=seed
+                )
+            )
+                        
         return files 
-        
     
     
     # HELPERS FOR LOG AND BENCHMARK FILES

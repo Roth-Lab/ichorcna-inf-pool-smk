@@ -55,9 +55,7 @@ properties:
     minContains: 1
     description: List of tumour content values to test
   clone_prevalences:
-    type: array
-    contains:
-      type: string
+    type: string
     minLength: 1
     description: List of paths to files with specified clone prevalences to use for simulation
   num_replicates:
@@ -66,11 +64,9 @@ properties:
     default: 1
     description: Number of replicates per setting of coverage and tumour content
   num_bins:
-    type: array
-    contains:
-      type: ["integer", "string"]
-      minimum: 0
-    default: [0]
+    type: ["integer", "string"]
+    minimum: 0
+    default: 0
     description: Number of bins to sample for inference. Default 0 uses all bins
 
 required: [
