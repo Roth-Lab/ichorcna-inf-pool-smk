@@ -10,10 +10,15 @@ from utils import ConfigManager
 
 config = ConfigManager(config)
 
+onsuccess:
+    shell("echo 'finish' | mail -s 'cfclone-fwd-sample-tf-smk: finished' lepurmatteo@gmail.com")
+
+onerror:
+    shell("echo 'error' | mail -s 'cfclone-fwd-sample-tf-smk: error' lepurmatteo@gmail.com")
 
 rule all:
     input:
-        config.pipeline_files,
+        config.pipeline_files
 
 
 rule build_config_file:
