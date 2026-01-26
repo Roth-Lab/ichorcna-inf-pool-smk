@@ -155,16 +155,32 @@ def plot_tf_estimates(
     
     # ADD ICHORCNA TF ESTIMATES 
     
+    # df_max = (
+        
+    #     df
+        
+    #     .groupby(['coverage', 'tumour_content', 'replicate'], group_keys=False)
+        
+    #     .apply(
+    #         lambda g: g.loc[g['loglik'].idxmax()]
+    #         if g['loglik'].notna().any()
+    #         else g.iloc[0]
+    #     )
+        
+    #     .reset_index(drop=True)
+    # )
+    
     df_max = (
+        df.
         
-        df
+        sort_values(
+            by=['coverage', 'tumour_content', 'replicate', 'loglik'], 
+            ascending=True
+        )
         
-        .groupby(['coverage', 'tumour_content', 'replicate'], group_keys=False)
-        
-        .apply(
-            lambda g: g.loc[g['loglik'].idxmax()]
-            if g['loglik'].notna().any()
-            else g.iloc[0]
+        .drop_duplicates(
+            subset=['coverage', 'tumour_content', 'replicate'], 
+            keep='last'
         )
         
         .reset_index(drop=True)
@@ -376,7 +392,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-i", "--in-file", type=str, default='/home/matteo/projects/cfdna/wfs/results/ichorcna-inf-pool-tf-smk/TFRI004/out_dir/summary_tfs.tsv')
+    parser.add_argument("-i", "--in-file", type=str, default='summary_tfs.tsv')
 
     parser.add_argument("-o", "--out-file", type=str, default='test.png')
 
