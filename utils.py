@@ -241,6 +241,12 @@ class ConfigManager(object):
             rel_path = template.relative_to(self.out_dir)
             parent = "output"
         return parent, rel_path
+    
+    # HELPERS FOR EMAIL NOTIFICATIONS
+    
+    @property
+    def email(self) -> str:
+        return self.config.get("email", "lepurmatteo@gmail.com")
 
     def notification(self, config_file: str, on: str) -> None:
 
