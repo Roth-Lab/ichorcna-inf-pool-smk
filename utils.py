@@ -250,15 +250,15 @@ class ConfigManager(object):
 
     def notification(self, config_file: str, on: str) -> None:
 
-        msg_template = "configfile: {config}"
+        msg_template = "configfile:{config}"
 
-        subj_template = "ichorcna-inf-pool-power-calc-smk: {on}"
+        subj_template = "ichorcna-inf-pool-power-calc-smk:{n}"
         
         cmd_template = "echo {msg} | mail -s {sub} {email}"
         
         msg = msg_template.format(config=config_file)
         
-        subj = subj_template.format(on=on)
+        subj = subj_template.format(n=on)
 
         cmd = cmd_template.format(msg=msg, sub=subj, email=self.email)
 
