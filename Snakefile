@@ -11,10 +11,12 @@ from utils import ConfigManager
 config = ConfigManager(config)
 
 onsuccess:
-    shell("echo 'finish' | mail -s 'ichorcna-inf-pool-tf-smk: finished' lepurmatteo@gmail.com")
+    config.notification(on="success", config_file=workflow.configfiles[0])
+
 
 onerror:
-    shell("echo 'error' | mail -s 'ichorcna-inf-pool-tf-smk: error' lepurmatteo@gmail.com")
+    config.notification(on="error", config_file=workflow.configfiles[0])
+
 
 rule all:
     input:

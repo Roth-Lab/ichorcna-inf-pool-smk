@@ -2,6 +2,8 @@ import pathlib
 
 from itertools import product
 
+from snakemake.shell import shell
+
 class ConfigManager(object):
     def __init__(self, config):
         self.config = config
@@ -239,3 +241,19 @@ class ConfigManager(object):
             rel_path = template.relative_to(self.out_dir)
             parent = "output"
         return parent, rel_path
+
+    def notification(self, config_file: str, on: str) -> None:
+
+        msg_template = "configfile: {config}"
+
+        subj_template = "ichorcna-inf-pool-power-calc-smk: {on}"
+        
+        cmd_template = "echo {msg} | mail -s {sub} {email}"
+        
+        msg = msg_template.format(config=config_file)
+        
+        subj = subj_template.format(on=on)
+
+        cmd = cmd_template.format(msg=msg, sub=subj, email=self.email)
+
+        shell(cmd)
