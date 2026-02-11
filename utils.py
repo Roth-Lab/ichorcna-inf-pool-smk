@@ -161,6 +161,12 @@ class ConfigManager(object):
     def tfs_plot_file(self):
         return self.out_dir.joinpath("tfs.png")
     
+
+    @property
+    def tfs_plot_file_log_scale(self):
+        return self.out_dir.joinpath("tfs_log_scale.png")
+    
+    
     @property
     def pipeline_files(self):
         
@@ -169,6 +175,8 @@ class ConfigManager(object):
         files.append(self.copied_config)
         
         files.append(self.tfs_plot_file)
+        
+        files.append(self.tfs_plot_file_log_scale)
         
         return files
 

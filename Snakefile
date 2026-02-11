@@ -179,3 +179,16 @@ rule plot_tfs_summary:
         "envs/plot.yaml"
     shell:
         "(python scripts/plot_summary_tfs.py -i {input} -o {output}) >{log} 2>&1"
+
+
+rule plot_tfs_summary_log_scale:
+    input:
+        config.summary_file_tfs
+    output:
+        config.tfs_plot_file_log_scale
+    log:
+        config.get_log_file(config.tfs_plot_file_log_scale)
+    conda:
+        "envs/plot.yaml"
+    shell:
+        "(python scripts/plot_summary_tfs.py -i {input} -o {output} --log-scale) >{log} 2>&1"

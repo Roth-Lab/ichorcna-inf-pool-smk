@@ -20,6 +20,7 @@ def plot(
     df_plot: pd.DataFrame,
     xlims: tuple[float, float] | None = None,
     ylims: tuple[float, float] | None = None,
+    log_scale: bool = False,
     figsize: tuple[float, float] | None = None,
     show: bool = False,
     output_path: str | None = None,
@@ -30,6 +31,7 @@ def plot(
             df_plot=df_plot,
             xlims=xlims,
             ylims=ylims,
+            log_scale=log_scale,
             figsize=figsize,
             output_path=output_path,
             add_inits=add_inits,
@@ -40,6 +42,7 @@ def _plot(
     df_plot: pd.DataFrame,
     xlims: tuple[float, float] | None = None,
     ylims: tuple[float, float] | None = None,
+    log_scale: bool = False,
     figsize: tuple[float, float] | None = None,
     show: bool = False,
     add_inits: bool = False,
@@ -60,10 +63,6 @@ def _plot(
                 'tf_est',               # ichor
                 'phi_est',              # ichor
                 'loglik',               # ichor
-                # 'mean',                 # cfclone
-                # 'lower_hdi',            # cfclone
-                # 'upper_hdi',            # cfclone
-                # 'median',               # cfclone
             ]
     """
     coverages = df_plot['coverage'].unique().tolist()
@@ -99,6 +98,7 @@ def _plot(
                     ax=ax,
                     xlims=xlims,
                     ylims=ylims,
+                    log_scale=log_scale,
                     add_inits=add_inits
                 )
                 
@@ -123,6 +123,7 @@ def plot_tf_estimates(
     ax: plt.Axes,
     xlims: tuple[float, float] | None = None,
     ylims: tuple[float, float] | None = None,
+    log_scale: bool = False,
     add_inits: bool = False
 ):
     """
@@ -151,24 +152,6 @@ def plot_tf_estimates(
     # ADD PERFECT INFERENCE LINE 
     
     add_y_equals_x(ax=ax)
-    
-    
-    # ADD ICHORCNA TF ESTIMATES 
-    
-    # df_max = (
-        
-    #     df
-        
-    #     .groupby(['coverage', 'tumour_content', 'replicate'], group_keys=False)
-        
-    #     .apply(
-    #         lambda g: g.loc[g['loglik'].idxmax()]
-    #         if g['loglik'].notna().any()
-    #         else g.iloc[0]
-    #     )
-        
-    #     .reset_index(drop=True)
-    # )
     
     df_max = (
         df.
@@ -206,45 +189,12 @@ def plot_tf_estimates(
     if add_inits:
         
         add_different_inits(df, ax)
-        
-        
-    # # add ols of cfclone
-    # df_cfclone = (
-    #     df
-    #     .drop(columns=['init', 'tf_est', 'phi_est', 'loglik'])
-    #     .drop_duplicates()
-    # )
-    # x = df_cfclone['tumour_content'].values
-    # y = df_cfclone['mean'].values 
-    # y_lb = df_cfclone['lower_hdi'].values
-    # y_ub = df_cfclone['upper_hdi'].values
-    # y_med = df_cfclone['median'].values
-    
-    # # add mean with hdis 
-    # ax.errorbar(
-    #     x=x,
-    #     y=y,
-    #     yerr=(y - y_lb, y_ub - y),
-    #     fmt='o',
-    #     color='blue',
-    # )
-    
-    # add_ols(
-    #     x=x,
-    #     y=y,
-    #     ax=ax,
-    #     label='cfclone',
-    #     color='blue',
-    #     text_coords=(0.8, 0.20)
-    # )
     
     add_legend(ax=ax)
 
     ax.set_title('Coverage: {}X'.format(covs[0]))
     
-    ax.set_xlabel('Expected tumour fraction')
-    
-    ax.set_ylabel('Estimated Tumour Fraction')
+
         
     if xlims is not None:
         
@@ -253,6 +203,23 @@ def plot_tf_estimates(
     if ylims is not None:
         
         ax.set_ylim(ylims)
+        
+        
+    if log_scale:
+        
+        ax.set_xlabel('log expected tumour fraction')
+        
+        ax.set_ylabel('log estimated tumour fraction')
+        
+        ax.set_xscale('log')
+        
+        ax.set_yscale('log')
+        
+    else:
+        
+        ax.set_xlabel('expected tumour fraction')
+        
+        ax.set_ylabel('estimated Tumour Fraction')
         
         
 def add_different_inits(df, ax):
@@ -381,7 +348,12 @@ def main(args):
     
     df['tf_est'] = 1. - df['n_est']
     
-    plot(df_plot=df, output_path=args.out_file, add_inits=True)
+    plot(
+        df_plot=df,
+        output_path=args.out_file, 
+        add_inits=args.add_inits,
+        log_scale=args.log_scale,
+    )
         
 
 
@@ -392,9 +364,15 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-i", "--in-file", type=str, default='summary_tfs.tsv')
+    parser.add_argument("-i", "--in-file", type=str, required=True)
 
-    parser.add_argument("-o", "--out-file", type=str, default='test.png')
+    parser.add_argument("-o", "--out-file", type=str, required=True)
+    
+    parser.add_argument("--add-inits", action="store_true")
+    
+    parser.add_argument("--log-scale", action="store_true")
+    
+    
 
     cli_args = parser.parse_args()
 
