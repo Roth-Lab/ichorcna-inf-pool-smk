@@ -16,7 +16,14 @@ def main(args):
         args.clone_cn_file, args.hapclone_data_file, args.hapclone_results_file
     )
 
-    ploidy = cell_profiles.sum(axis=-1).mean(axis=1)
+    # ploidy = cell_profiles.sum(axis=-1).mean(axis=1)
+    
+    ploidy = compute_ploidy(
+        cell_profiles,
+        cell_to_clone,
+        data,
+        clone_prevalence_file=args.clone_prevalence_file,
+    )
 
     target_normal_reads, target_tumour_reads = compute_target_reads(
         args.coverage,
@@ -75,12 +82,6 @@ def main(args):
     df = df.rename(columns={"beg": "start", "rdr_cor": "rdr"})
 
     df = df[df["valid"]]
-    
-    # df_clone_cn = pd.read_csv(args.clone_cn_file, sep="\t")
-    
-    # df_bins = df_clone_cn.drop_duplicates(subset=["chrom", "start", "end"])
-    
-    # df = df.merge(df_bins, on=["chrom", "start", "end"], how="inner")
 
     df.to_csv(args.out_file, index=False, sep="\t")
 
@@ -113,6 +114,61 @@ def load_data(clone_cn_file, data_file, results_file):
     cell_profiles = np.stack([cell_cn_a.values, cell_cn_b.values], axis=-1)
 
     return cell_profiles, cell_to_clone, data
+
+
+def compute_ploidy(
+    cell_profiles: np.ndarray,
+    cell_to_clone: dict[str, int],
+    data,
+    clone_prevalence_file: str | None = None
+) -> np.ndarray:
+    """
+    Computes average clone copy number profile for cells(i.e. ploidy).
+    If specify clone prevalences, subset to cells in clones with prevalence > 0.
+    
+    Args:
+        cell_profiles (np.ndarray): (num_cells, num_bins, 2) array of cell copy number profiles.
+        cell_to_clone (dict[str, int]): mapping from cell id to clone assignment
+        clone_prevs (str): path to clone prevalence profiles.
+        data (DataSet): Class containing cell data.
+        
+    Returns:
+        ploidy (np.array): (num_cells) array of ploidy for each cell.
+    """
+    
+    if clone_prevalence_file is None:
+        
+        ploidy = cell_profiles.sum(axis=-1).mean(axis=1)
+        
+    else:
+            
+        clone_prev = (
+            
+            pd.read_csv(clone_prevalence_file, converters={"clone_id": int}, sep="\t")
+            
+            .rename(columns={"mean_prevalence": "prevalence"})
+            
+            .set_index("clone_id")["prevalence"].to_dict()
+            
+        )
+        
+        cells_to_use = []
+
+        for c, prev in clone_prev.items():
+            
+            if prev > 0.:
+            
+                clone_cells = [k for k, v in cell_to_clone.items() if v == c]
+
+                idxs = [data.cells.index(x) for x in clone_cells]
+                
+                cells_to_use.extend(idxs)
+            
+        subset_cell_profiles = cell_profiles[cells_to_use]
+        
+        ploidy = subset_cell_profiles.sum(axis=-1).mean(axis=1)
+        
+    return ploidy
 
 
 def compute_snp_density(data, snp_file):
@@ -511,40 +567,32 @@ class DataSet(object):
 
 if __name__ == "__main__":
     import argparse
-    
-    default0 = "/home/matteo/projects/cfdna/wfs/results/cfclone-inf-pool-cal-smk/TFRI004/out_dir/input/clone_cn.tsv.gz"
-    
-    default1 = "/home/matteo/projects/cfdna/wfs/data/cfclone-inf-pool-cal-smk/TFRI004/hapclone/data.h5"
-    
-    default2 = "/home/matteo/projects/cfdna/wfs/data/cfclone-inf-pool-cal-smk/TFRI004/hapclone_refit/merged_results.tsv.gz"
-    
-    default3 = "/home/matteo/projects/cfdna/wfs/data/cfclone-inf-pool-cal-smk/TFRI004/hapclone_refit/rephased_snps.bcf"
-    
-    default4 = "/home/matteo/projects/cfdna/wfs/results/cfclone-inf-pool-cal-smk/TFRI004/out_dir/input/ctdna/coverage_0/tc_0/cp_0/replicate_0.tsv.gz"
-    
-    default5 = "/home/matteo/projects/cfdna/wfs/configs/cfclone-inf-pool-cal-smk/TFRI004/clone-prevs/clone_prevs_00.tsv"
-    
+
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-c", "--clone-cn-file", default=default0)
+    parser.add_argument("-c", "--clone-cn-file", required=True)
 
-    parser.add_argument("-d", "--hapclone-data-file", default=default1)
+    parser.add_argument("-d", "--hapclone-data-file", required=True)
 
-    parser.add_argument("-r", "--hapclone-results-file", default=default2)
+    parser.add_argument("-r", "--hapclone-results-file", required=True)
 
-    parser.add_argument("-s", "--snp-file", default=default3)
+    parser.add_argument("-s", "--snp-file", required=True)
 
-    parser.add_argument("-o", "--out-file", default=default4)
+    parser.add_argument("-o", "--out-file", required=True)
 
-    parser.add_argument("--coverage", default=1, type=float)
+    parser.add_argument(
+        "--clone-prevalence-file", 
+        type=lambda x: None if x == 'None' else x,
+        required=True,
+    )
 
-    parser.add_argument("--read-length", default=150, type=int)
+    parser.add_argument("--coverage", type=float, required=True)
 
-    parser.add_argument("--seed", default=None, type=int)
+    parser.add_argument("--read-length", type=int, required=True)
 
-    parser.add_argument("--tumour-content", default=0.1, type=float)
-    
-    parser.add_argument("--clone-prevalence-file", default=default5)
+    parser.add_argument("--seed", type=int, required=True)
+
+    parser.add_argument("--tumour-content", type=float, required=True)
 
     cli_args = parser.parse_args()
 
