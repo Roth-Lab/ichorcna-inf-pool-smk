@@ -15,7 +15,11 @@ onsuccess:
         on="success",
         workflow="ichorcna-inf-pool-tf-smk",
         configfile=workflow.configfiles[0],
-        imgs=[config.copied_config, config.tfs_plot_file]
+        imgs=[
+            config.copied_config, 
+            config.tfs_plot_file,
+            config.tfs_plot_file_log_scale,
+        ]
     )
 
 
