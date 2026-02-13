@@ -80,6 +80,5 @@ required: [
   "ichorcna_settings_file",
   "coverage",
   "tumour_content",
-  "clone_prevalences",
   "num_replicates",
 ]

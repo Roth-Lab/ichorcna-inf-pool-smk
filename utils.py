@@ -34,7 +34,7 @@ class ConfigManager(object):
     
     @property
     def clone_prevalences(self):
-        return self.config['clone_prevalences']
+        return self.config.get('clone_prevalences', None)
     
     @property
     def num_bins(self):
