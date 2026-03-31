@@ -63,7 +63,6 @@ rule build_cfclone_clone_cn_files:
         "-n {params} "
         "-o {output} ) >{log} 2>&1"
 
-
 rule build_cfclone_ctdna_file:
     input:
         c=config.cfclone_clone_cn_template,
@@ -75,8 +74,8 @@ rule build_cfclone_ctdna_file:
     params:
         r=config.read_length,
         p=config.clone_prevalences,
-        t=config.get_tumour_content_arg,
         c=config.get_coverage_arg,
+        t=config.get_tumour_content_arg,
     conda:
         "envs/python.yaml"
     log:
@@ -84,8 +83,7 @@ rule build_cfclone_ctdna_file:
     benchmark:
         config.get_benchmark_file(config.cfclone_ctdna_template),
     shell:
-        "(python scripts/build_ctdna_file.py "
-        "-c {input.c} "
+        "(python scripts/build_data.py "
         "-d {input.d} "
         "-r {input.r} "
         "-s {input.s} "
@@ -93,6 +91,7 @@ rule build_cfclone_ctdna_file:
         "--read-length {params.r} "
         "--seed {wildcards.seed} "
         "--tumour-content {params.t} "
+        "--clone-prevalence-prior 1 "
         "--clone-prevalence-file {params.p} "
         "-o {output}) >{log} 2>&1"
 
