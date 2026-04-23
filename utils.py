@@ -30,6 +30,18 @@ class ConfigManager(object):
     def num_replicates(self):
         return self.config.get("num_replicates", 1)
     
+    @property
+    def ichorcna_settings_files(self) -> list[str]:
+        return self.config['ichorcna_settings_files']
+    
+    @property
+    def ichorcna_settings_id(self) -> list[int]:
+        return list(range(len(self.ichorcna_settings_files)))
+    
+    # @property
+    # def ichorcna_settings_file(self):
+    #     return pathlib.Path(self.config["ichorcna_settings_file"]).resolve()
+    
     # DATA GENERATION SETTINGS 
     
     @property
@@ -68,10 +80,6 @@ class ConfigManager(object):
     def wig_template_file(self):
         return pathlib.Path(self.config["wig_template_file"]).resolve()
     
-    @property
-    def ichorcna_settings_file(self):
-        return pathlib.Path(self.config["ichorcna_settings_file"]).resolve()
-
     # OUTPUT DIRECTORIES FILES 
     
     @property
@@ -131,7 +139,8 @@ class ConfigManager(object):
     def replicate_dir(self):
         return self.tmp_dir.joinpath(
             "coverage_{coverage_id}",
-            "tc_{tumour_content_id}", 
+            "tc_{tumour_content_id}",
+            "ichorcna_settings_{ichorcna_settings_id}",
             "replicate_{seed}",
         )
 
@@ -191,6 +200,9 @@ class ConfigManager(object):
     def get_clone_prevalences_file_arg(self, wildcards):
         return str(self.clone_prevalences[int(wildcards.clone_prevalences_id)])
     
+    def get_ichorcna_settings_file_arg(self, wildcards):
+        return pathlib.Path(self.ichorcna_settings_files[int(wildcards.ichorcna_settings_id)])
+    
     @property
     def get_num_bins_arg(self):
         num_bins = self.num_bins
@@ -205,23 +217,25 @@ class ConfigManager(object):
         ).format(
             coverage_id=wildcards.coverage_id,
             tumour_content_id=wildcards.tumour_content_id,
+            ichorcna_settings_id=wildcards.ichorcna_settings_id,
             seed=wildcards.seed,
         )
     
     @property
     def combos(self):
-        return [self.coverage_ids, self.tumour_content_ids, range(self.num_replicates)]
+        return [self.coverage_ids, self.tumour_content_ids, self.ichorcna_settings_id, range(self.num_replicates)]
     
     @property
     def get_summary_files(self):
         
         files = []
         
-        for cov, tc, seed in product(*self.combos):
+        for cov, tc, ichor, seed in product(*self.combos):
             
             files.append(str(self.replicate_summary_file_template).format(
                 coverage_id=cov,
                 tumour_content_id=tc,
+                ichorcna_settings_id=ichor,
                 seed=seed
                 )
             )

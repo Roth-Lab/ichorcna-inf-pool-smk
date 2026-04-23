@@ -77,7 +77,7 @@ required: [
   "hapclone_results_file",
   "snp_file",
   "wig_template_file",
-  "ichorcna_settings_file",
+  "ichorcna_settings_files",
   "coverage",
   "tumour_content",
   "num_replicates",

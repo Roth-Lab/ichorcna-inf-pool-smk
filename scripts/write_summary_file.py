@@ -80,7 +80,9 @@ def main(args):
     
     df.insert(3, 'num_bins', args.num_bins)
     
-    df.insert(4, 'replicate', args.replicate)
+    df.insert(4, 'ichorcna_settings_file', args.ichorcna_settings_file)
+    
+    df.insert(5, 'replicate', args.replicate)
     
     df.to_csv(args.out_file, sep="\t", index=False)
    
@@ -117,6 +119,8 @@ if __name__ == "__main__":
     parser.add_argument('--num-bins', type=str, default=default5)
     
     parser.add_argument('--replicate', type=int, default=default6)
+    
+    parser.add_argument('--ichorcna-settings-file', type=str)
     
     
     cli_args = parser.parse_args()

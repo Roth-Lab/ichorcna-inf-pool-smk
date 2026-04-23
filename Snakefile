@@ -127,7 +127,7 @@ rule run_ichorcna:
         "envs/ichorcna.yaml"
     params:
         o=lambda wildcards: config.get_replicate_out_dir(wildcards),
-        s=config.ichorcna_settings_file,
+        s=lambda wildcards: config.get_ichorcna_settings_file_arg(wildcards)
     shell:
         """
         myichorcna run -o {params.o} -s {params.s} -c {input} >{log} 2>&1
@@ -146,6 +146,7 @@ rule build_replicate_summary_file:
         n=config.get_num_bins_arg,
         cov=config.get_coverage_arg,
         tc=config.get_tumour_content_arg,
+        ichor=config.get_ichorcna_settings_file_arg
     shell:
         "(python scripts/write_summary_file.py "
         "-i {input} "
@@ -153,6 +154,7 @@ rule build_replicate_summary_file:
         "--coverage {params.cov} "
         "--tumour-content {params.tc} "
         "--clone-prevalences {params.cp} "
+        "--ichorcna-settings-file {params.ichor} "
         "--num-bins {params.n} ) >{log} 2>&1"
 
 
