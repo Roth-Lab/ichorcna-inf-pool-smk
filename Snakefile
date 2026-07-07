@@ -77,23 +77,23 @@ rule build_cfclone_ctdna_file:
         c=config.get_coverage_arg,
         t=config.get_tumour_content_arg,
     conda:
-        "envs/python.yaml"
+        "envs/cfsim.yaml"
     log:
         config.get_log_file(config.cfclone_ctdna_template),
     benchmark:
         config.get_benchmark_file(config.cfclone_ctdna_template),
     shell:
-        "(python scripts/build_data.py "
-        "-d {input.d} "
-        "-r {input.r} "
-        "-s {input.s} "
+        "(cfsim simulate "
+        "--out-file {output} "
+        "--hapclone-data-file {input.d} "
+        "--hapclone-results-file {input.r} "
+        "--snp-file {input.s} "
         "--coverage {params.c} "
         "--read-length {params.r} "
-        "--seed {wildcards.seed} "
+        "--seed {wildcards.data_seed_id} "
         "--tumour-content {params.t} "
         "--clone-prevalence-prior 1 "
-        "--clone-prevalence-file {params.p} "
-        "-o {output}) >{log} 2>&1"
+        "--clone-prevalence-file {params.p}) >{log} 2>&1"
 
 
 rule build_ctdna_wig_file:
@@ -102,16 +102,13 @@ rule build_ctdna_wig_file:
     output:
         config.ctdna_wig_template,
     conda:
-        "envs/python.yaml"
+        "envs/cfsim.yaml"
     log:
         config.get_log_file(config.ctdna_wig_template)
     params:
         config.wig_template_file
     shell:
-        "(python scripts/build_ctdna_wig.py "
-        "-i {input} "
-        "-o {output} "
-        "--wig-template-file {params} ) >{log} 2>&1"
+        "(cfsim generate-wig --in-file {input} --out-file {output}) >{log} 2>&1"
 
 
 rule run_ichorcna:

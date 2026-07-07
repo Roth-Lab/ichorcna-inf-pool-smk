@@ -1,0 +1,16 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - click>=8.0
+  - h5py
+  - pandas
+  - pysam
+  - scipy
+  - statsmodels
+  - matplotlib
+  - seaborn
+  - numpy
+  - pip
+  - pip:
+    - "git+ssh://git@github.com/matteolepur/cfsim"
