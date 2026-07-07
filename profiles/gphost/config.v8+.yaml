@@ -3,6 +3,7 @@ use-conda: True
 cores: 100
 
 rerun-incomplete: True
+retries: 10
 
 resources:
   job_load_factor: 10
