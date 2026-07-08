@@ -90,7 +90,7 @@ rule build_cfclone_ctdna_file:
         "--snp-file {input.s} "
         "--coverage {params.c} "
         "--read-length {params.r} "
-        "--seed {wildcards.data_seed_id} "
+        "--seed {wildcards.seed} "
         "--tumour-content {params.t} "
         "--clone-prevalence-prior 1 "
         "--clone-prevalence-file {params.p}) >{log} 2>&1"
@@ -152,6 +152,7 @@ rule build_replicate_summary_file:
         "--tumour-content {params.tc} "
         "--clone-prevalences {params.cp} "
         "--ichorcna-settings-file {params.ichor} "
+        "--replicate {wildcards.seed} "
         "--num-bins {params.n} ) >{log} 2>&1"
 
 
