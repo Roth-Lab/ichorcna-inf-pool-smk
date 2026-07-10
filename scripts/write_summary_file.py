@@ -90,37 +90,23 @@ def main(args):
 if __name__ == "__main__":
     from argparse import ArgumentParser
     
-    default0 = "/home/matteo/projects/cfdna/wfs/results/ichorcna-inf-pool-tf-smk/TFRI004/pipeline_dir/tmp/coverage_0/tc_0/cp_0/num_bins_0/replicate_0/results/DummySampleID.params.txt"
-    
-    default1 = 'test.tsv'
-    
-    default2 = 1.
-    
-    default3 = 0.5
-    
-    default4 = '/home/matteo/projects/cfdna/wfs/results/data_generation/clone_prevalences/clone_prevs_3_clones.tsv'
-    
-    default5 = 10
-    
-    default6 = 0
-    
     parser = ArgumentParser()
     
-    parser.add_argument('-i', '--in-file', type=str, default=default0)
+    parser.add_argument('-i', '--in-file', type=str, required=True)
     
-    parser.add_argument('-o', '--out-file', type=str, default=default1)
+    parser.add_argument('-o', '--out-file', type=str, required=True)
     
-    parser.add_argument('--coverage', type=float, default=default2)
+    parser.add_argument('--coverage', type=float, required=True)
     
-    parser.add_argument('--tumour-content', type=float, default=default3)
+    parser.add_argument('--tumour-content', type=float, required=True)
     
-    parser.add_argument('--clone-prevalences', type=str, default=default4)
+    parser.add_argument('--clone-prevalences', type=str, required=True)
     
-    parser.add_argument('--num-bins', type=str, default=default5)
+    parser.add_argument('--num-bins', type=str, required=True)
     
-    parser.add_argument('--replicate', type=int, default=default6)
+    parser.add_argument('--replicate', type=int, required=True)
     
-    parser.add_argument('--ichorcna-settings-file', type=str)
+    parser.add_argument('--ichorcna-settings-file', type=str, required=True)
     
     
     cli_args = parser.parse_args()
