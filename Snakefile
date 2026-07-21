@@ -10,25 +10,6 @@ from utils import ConfigManager
 
 config = ConfigManager(config)
 
-onsuccess:
-    config.notification(
-        on="success",
-        workflow="ichorcna-inf-pool-tf-smk",
-        configfile=workflow.configfiles[0],
-        imgs=[
-            config.copied_config, 
-            config.tfs_plot_file,
-            config.tfs_plot_file_log_scale,
-        ]
-    )
-
-
-onerror:
-    config.notification(
-        on="error", 
-        workflow="ichorcna-inf-pool-tf-smk",
-        configfile=workflow.configfiles[0],
-    )
 
 rule all:
     input:
