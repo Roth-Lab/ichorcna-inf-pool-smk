@@ -1,7 +1,5 @@
 import pandas as pd
-
 from pandas.io.common import StringIO
-
 from pathlib import Path
 
 

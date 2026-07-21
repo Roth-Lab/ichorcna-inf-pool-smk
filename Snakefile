@@ -125,6 +125,8 @@ rule build_replicate_summary_file:
         cov=config.get_coverage_arg,
         tc=config.get_tumour_content_arg,
         ichor=config.get_ichorcna_settings_file_arg
+    conda:
+        "envs/python.yaml"
     shell:
         "(python scripts/write_summary_file.py "
         "-i {input} "
@@ -160,7 +162,7 @@ rule plot_tfs_summary:
     log:
         config.get_log_file(config.tfs_plot_file)
     conda:
-        "envs/plot.yaml"
+        "envs/python.yaml"
     shell:
         "(python scripts/plot_summary_tfs.py -i {input} -o {output}) >{log} 2>&1"
 
@@ -173,6 +175,6 @@ rule plot_tfs_summary_log_scale:
     log:
         config.get_log_file(config.tfs_plot_file_log_scale)
     conda:
-        "envs/plot.yaml"
+        "envs/python.yaml"
     shell:
         "(python scripts/plot_summary_tfs.py -i {input} -o {output} --log-scale) >{log} 2>&1"

@@ -1,9 +1,6 @@
 import pandas as pd 
-
-import matplotlib.pyplot as plt
-
 import numpy as np 
-
+import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 
 
@@ -371,8 +368,6 @@ if __name__ == "__main__":
     parser.add_argument("--add-inits", action="store_true")
     
     parser.add_argument("--log-scale", action="store_true")
-    
-    
 
     cli_args = parser.parse_args()
 
